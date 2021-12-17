@@ -37,14 +37,15 @@ func parse(commandLine string) engine.Command {
 
 	fields := strings.Fields(commandLine)
 
-	if fields[0] == "print" {
+	command := fields[0]
+	if command == "print" {
 		if len(fields) > 2 {
-			return (&commands.PrintCommand{Arg: "SYNTAX ERROR: too many arguments"})
+			return (&commands.PrintCommand{Arg: "SYNTAX ERROR: too many arguments for " + command})
 		}
 		return (&commands.PrintCommand{Arg: fields[1]})
-	} else if fields[0] == "sha1" {
+	} else if command == "sha1" {
 		if len(fields) > 2 {
-			return (&commands.PrintCommand{Arg: "SYNTAX ERROR: too many arguments"})
+			return (&commands.PrintCommand{Arg: "SYNTAX ERROR: too many arguments for " + command})
 		}
 		return (&commands.ShaCommand{Arg: fields[1]})
 	}
