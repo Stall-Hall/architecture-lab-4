@@ -5,27 +5,27 @@ import "sync"
 type commandQueue struct {
 	sync.Mutex
 
-	cmds      []Command
-	noCmd		bool
-	pushDone    chan struct{}
+	cmds     []Command
+	noCmd    bool
+	pushDone chan struct{}
 }
 
 func (cmdQ *commandQueue) push(cmd Command) {
 	cmdQ.Lock()
-	
+
 	cmdQ.cmds = append(cmdQ.cmds, cmd)
 
 	cmdQ.Unlock()
 
-	if(cmdQ.noCmd) {
-		cmdQ == false
+	if cmdQ.noCmd {
+		cmdQ.noCmd = false
 		cmdQ.pushDone <- struct{}{}
 	}
 }
 
 func (cmdQ *commandQueue) pull() Command {
 	cmdQ.Lock()
-	
+
 	if len(cmdQ.cmds) == 0 {
 		cmdQ.noCmd = true
 		cmdQ.Unlock()
@@ -37,7 +37,7 @@ func (cmdQ *commandQueue) pull() Command {
 	cmdQ.cmds[0] = nil
 	cmdQ.cmds = cmdQ.cmds[1:]
 
-	mdQ.Unlock()
+	cmdQ.Unlock()
 
 	return cmd
 }
@@ -58,8 +58,8 @@ func (cmdEx *cmdExecutor) Execute(h Handler) {
 }
 
 type EventLoop struct {
-	q        *commandQueue
-	finishWait  bool
+	q          *commandQueue
+	finishWait bool
 	finishDone chan struct{}
 }
 
