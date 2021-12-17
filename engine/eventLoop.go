@@ -12,14 +12,15 @@ type commandQueue struct {
 
 func (cmdQ *commandQueue) push(cmd Command) {
 	cmdQ.Lock()
-
+	defer cmdQ.Unlock()
 	cmdQ.cmds = append(cmdQ.cmds, cmd)
 
-	cmdQ.Unlock()
+	
 }
 
 func (cmdQ *commandQueue) pull() Command {
 	cmdQ.Lock()
+	defer cmdQ.Unlock()
 
 	if len(cmdQ.cmds) == 0 {
 		cmdQ.noCmd = true
@@ -32,15 +33,14 @@ func (cmdQ *commandQueue) pull() Command {
 	cmdQ.cmds[0] = nil
 	cmdQ.cmds = cmdQ.cmds[1:]
 
-	cmdQ.Unlock()
+	
 
 	return cmd
 }
 
 func (cmdQ *commandQueue) length() int {
 	cmdQ.Lock()
-
-	cmdQ.Unlock()
+	defer cmdQ.Unlock()
 
 	return len(cmdQ.cmds)
 }
