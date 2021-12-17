@@ -1,0 +1,5 @@
+print sdas
+sha1 234
+print 233
+sha1 sss
+sha1 23jsd
