@@ -1,12 +1,11 @@
 package main
 
 import (
-	"architecture-lab-4/commands"
 	"architecture-lab-4/engine"
+	"architecture-lab-4/parser"
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 )
 
 var inputFile = "input.txt"
@@ -21,33 +20,11 @@ func main() {
 		scanner := bufio.NewScanner(input)
 		for scanner.Scan() {
 			nextCommandLine := scanner.Text()
-			cmd := parse(nextCommandLine)
+			cmd := parser.Parse(nextCommandLine)
 			eventLoop.Post(cmd)
 		}
 	} else {
 		fmt.Fprintln(os.Stderr, err.Error())
 	}
 	eventLoop.AwaitFinish()
-}
-
-func parse(commandLine string) engine.Command {
-	if len(commandLine) <= 0 {
-		return (&commands.PrintCommand{Arg: "SYNTAX ERROR: empty line"})
-	}
-
-	fields := strings.Fields(commandLine)
-
-	command := fields[0]
-	if command == "print" {
-		if len(fields) > 2 {
-			return (&commands.PrintCommand{Arg: "SYNTAX ERROR: too many arguments for " + command})
-		}
-		return (&commands.PrintCommand{Arg: fields[1]})
-	} else if command == "sha1" {
-		if len(fields) > 2 {
-			return (&commands.PrintCommand{Arg: "SYNTAX ERROR: too many arguments for " + command})
-		}
-		return (&commands.ShaCommand{Arg: fields[1]})
-	}
-	return (&commands.PrintCommand{Arg: "SYNTAX ERROR: unknown command"})
 }
